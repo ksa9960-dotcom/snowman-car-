@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="눈사람 자동차"/>
+<meta name="theme-color" content="#0a0e14"/>
+<title>🚗 눈사람 자동차 정비수첩</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0e14;--surface:#111720;--surface2:#18202d;--border:#1e2d42;
+  --green:#22c55e;--orange:#f97316;--red:#ef4444;--yellow:#eab308;
+  --blue:#3b82f6;--text:#e2e8f0;--muted:#64748b;--accent:#38bdf8;
+}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
+.app{max-width:480px;margin:0 auto;min-height:100vh}
+
+.header{background:linear-gradient(160deg,#0d1829 0%,#0a0e14 100%);padding:20px 16px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.car-logo{width:42px;height:42px;background:linear-gradient(135deg,#1e3a5f,#0d1829);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid #1e3a5f}
+.car-title{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;color:#e2e8f0;letter-spacing:1px;line-height:1.2}
+.car-sub{font-size:10px;color:var(--muted);margin-top:2px;font-weight:500}
+.date-badge{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--muted)}
+
+.mileage-bar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.mileage-label{font-size:11px;color:var(--muted);white-space:nowrap}
+.mileage-input{background:none;border:none;color:var(--accent);font-family:'Orbitron',monospace;font-size:20px;font-weight:900;width:120px;outline:none;text-align:right}
+.mileage-km{font-size:12px;color:var(--muted)}
+.save-km-btn{margin-left:auto;background:var(--blue);border:none;color:#fff;font-size:11px;font-weight:700;border-radius:8px;padding:6px 11px;cursor:pointer}
+
+.overall-bar{margin-top:10px}
+.overall-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px}
+.bar-track{background:#1a2538;border-radius:4px;height:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+
+.copy-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 32px);margin:14px 16px 0;padding:13px;background:linear-gradient(135deg,#166534,#15803d);border:1px solid #22c55e33;border-radius:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+.copy-btn:active{transform:scale(.98)}
+
+.section{padding:12px 16px 0}
+.section-title{font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+
+.card{background:var(--surface);border-radius:14px;border-left:4px solid;margin-bottom:9px}
+.card-inner{padding:14px 12px;display:flex;align-items:flex-start;gap:12px}
+.card-icon{font-size:26px;flex-shrink:0;line-height:1}
+.card-body{flex:1;min-width:0}
+.card-label{font-size:15px;font-weight:700;margin-bottom:3px}
+.card-date{font-size:11px;color:var(--muted);margin-top:2px}
+.card-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.prog-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.prog-track{width:88px;height:5px;background:#1a2538;border-radius:3px;overflow:hidden}
+.prog-bar{height:100%;border-radius:3px;transition:width .4s}
+.prog-next{font-size:10px;color:var(--muted);font-weight:500;font-family:'Orbitron',monospace}
+.edit-btn{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 10px;cursor:pointer;color:var(--text);font-size:14px}
+.no-record{font-size:11px;color:var(--yellow);background:#eab30811;border:1px solid #eab30833;border-radius:6px;padding:3px 8px;display:inline-block;margin-top:2px}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.badge-red{background:#ef444422;color:#ef4444;border:1px solid #ef444444}
+.badge-orange{background:#f9731622;color:#f97316;border:1px solid #f9731644}
+.badge-green{background:#22c55e22;color:#22c55e;border:1px solid #22c55e44}
+.badge-yellow{background:#eab30822;color:#eab308;border:1px solid #eab30844}
+
+.overlay{position:fixed;inset:0;background:#000000bb;z-index:100;display:flex;align-items:flex-end}
+.modal{background:#111720;border-radius:22px 22px 0 0;width:100%;max-width:480px;margin:0 auto;padding:22px 18px 36px;border-top:1px solid var(--border)}
+.modal-title{font-size:16px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.field input{width:100%;background:#0d1520;border:1px solid var(--border);border-radius:10px;color:var(--text);padding:11px 13px;font-size:15px;outline:none;font-family:inherit}
+.field input:focus{border-color:var(--blue)}
+.modal-btns{display:flex;gap:10px;margin-top:18px}
+.btn-save{flex:1;padding:13px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+.btn-cancel{flex:1;padding:13px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:15px;cursor:pointer}
+.record-list{margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.record-item{background:#0d1520;border-radius:8px;padding:8px 11px;margin-bottom:7px;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.record-date{color:var(--accent);font-weight:600}
+.record-km{color:var(--muted);font-family:'Orbitron',monospace;font-size:11px}
+
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#166534;color:#fff;padding:11px 22px;border-radius:22px;font-size:13px;font-weight:700;z-index:200;white-space:nowrap;box-shadow:0 4px 20px #22c55e44;animation:toastin .25s ease}
+@keyframes toastin{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+</style>
+</head>
+<body>
+<div class="app" id="root"></div>
+<script>
+const INITIAL_ITEMS = [
+  { id:"engine_oil",   label:"엔진오일",     icon:"🛢️", rules:{km:8000},         records:[{date:"2025-06-11",km:"68880"}] },
+  { id:"battery",      label:"배터리",        icon:"🔋", rules:{km:40000,years:3}, records:[{date:"2022-05-28",km:"40166"}] },
+  { id:"ac_filter",    label:"에어컨필터",    icon:"❄️", rules:{km:15000},        records:[{date:"2025-06-11",km:"68880"}] },
+  { id:"brake",        label:"브레이크패드",  icon:"🛑", rules:{km:30000},        records:[{date:"2024-05-20",km:"60000"}] },
+  { id:"tire",         label:"타이어 점검",   icon:"🛞", rules:{km:10000},        records:[] },
+  { id:"coolant",      label:"냉각수",        icon:"💧", rules:{km:50000},        records:[] },
+  { id:"trans_oil",    label:"미션오일",      icon:"⚙️", rules:{km:60000},        records:[] },
+  { id:"spark_plug",   label:"점화플러그",    icon:"⚡", rules:{km:40000},        records:[] },
+  { id:"timing_chain", label:"타이밍체인",    icon:"🔗", rules:{km:100000},       records:[] },
+  { id:"power_steer",  label:"파워스티어링",  icon:"🔧", rules:{km:40000},        records:[] },
+];
+
+let state = {
+  mileage: 85000,
+  items: JSON.parse(JSON.stringify(INITIAL_ITEMS)),
+  modal: null,
+  toast: "", toastTimer: null,
+  form: { date:"", km:"" },
+};
+
+// 로컬스토리지 저장/불러오기
+function load() {
+  try {
+    const d = localStorage.getItem("snowman_car_v2");
+    if (d) { const p = JSON.parse(d); state.mileage = p.mileage; state.items = p.items; }
+  } catch(e) {}
+}
+function save() {
+  try { localStorage.setItem("snowman_car_v2", JSON.stringify({mileage:state.mileage, items:state.items})); } catch(e) {}
+}
+
+function getNextKm(item) {
+  if (!item.records.length) return null;
+  return Number(item.records[item.records.length-1].km) + item.rules.km;
+}
+function getDateInfo(item) {
+  if (!item.rules.years || !item.records.length) return null;
+  const exp = new Date(item.records[item.records.length-1].date);
+  exp.setFullYear(exp.getFullYear() + item.rules.years);
+  return { expireDate: exp, remainDays: Math.ceil((exp - new Date()) / 86400000) };
+}
+function getStatus(item) {
+  const km = state.mileage;
+  if (!item.records.length) return { level:"yellow", text:"기록 없음", progress:0, remaining:null, dateInfo:null };
+  const nextKm = getNextKm(item);
+  const remaining = nextKm ? nextKm - km : null;
+  const progress = nextKm ? Math.min(((km-(nextKm-item.rules.km))/item.rules.km)*100,100) : 0;
+  let kl=0;
+  if (nextKm && km >= nextKm) kl=2;
+  else if (nextKm && remaining <= item.rules.km*0.1) kl=1;
+  const di = getDateInfo(item);
+  let dl=0;
+  if (di) { if(di.remainDays<=0) dl=2; else if(di.remainDays<=90) dl=1; }
+  const lv = Math.max(kl,dl);
+  return { level:["green","orange","red"][lv], text:["정상","교체 임박","즉시 교체"][lv], progress, remaining, dateInfo:di };
+}
+function colorOf(l) { return l==="red"?"#ef4444":l==="orange"?"#f97316":l==="green"?"#22c55e":"#eab308"; }
+function fkm(km) { return km!=null ? Number(km).toLocaleString() : "—"; }
+function today() { return new Date().toISOString().slice(0,10); }
+
+function render() {
+  const root = document.getElementById("root");
+  const urgent = state.items.filter(i=>getStatus(i).level==="red");
+  const warn   = state.items.filter(i=>getStatus(i).level==="orange");
+  const miss   = state.items.filter(i=>getStatus(i).level==="yellow");
+  const ok     = state.items.filter(i=>getStatus(i).level==="green");
+  const doneC  = ok.length + warn.length;
+  const pct    = Math.round(doneC/state.items.length*100);
+  const nowDate = new Date().toLocaleDateString("ko-KR",{month:"short",day:"numeric"});
+
+  root.innerHTML = `
+  <div class="header">
+    <div class="header-top">
+      <div class="car-logo">🚗</div>
+      <div><div class="car-title">SNOWMAN CAR</div><div class="car-sub">티볼리에어 정비수첩</div></div>
+      <div style="margin-left:auto"><div class="date-badge">📅 ${nowDate}</div></div>
+    </div>
+    <div class="mileage-bar">
+      <span class="mileage-label">주행거리</span>
+      <input class="mileage-input" id="km-input" type="number" value="${state.mileage}"/>
+      <span class="mileage-km">km</span>
+      <button class="save-km-btn" onclick="saveMileage()">저장</button>
+    </div>
+    <div class="overall-bar">
+      <div class="overall-row"><span>전체 점검 현황</span><span style="color:${pct===100?'#22c55e':'#38bdf8'};font-weight:700">${doneC}/${state.items.length} · ${pct}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${pct===100?'#22c55e':'linear-gradient(90deg,#1d4ed8,#38bdf8)'}"></div></div>
+    </div>
+  </div>
+  <button class="copy-btn" onclick="copySummary()">📋 정비소 요청사항 복사</button>
+  <div class="section">
+    ${urgent.length?`<div class="section-title"><span style="color:#ef4444">🔴</span> 즉시 교체 필요</div>${urgent.map(cardHTML).join("")}`:""}
+    ${warn.length?`<div class="section-title" style="margin-top:${urgent.length?10:0}px"><span style="color:#f97316">🟠</span> 교체 임박</div>${warn.map(cardHTML).join("")}`:""}
+    ${miss.length?`<div class="section-title" style="margin-top:10px"><span style="color:#eab308">🟡</span> 기록 없음</div>${miss.map(cardHTML).join("")}`:""}
+    ${ok.length?`<div class="section-title" style="margin-top:10px"><span style="color:#22c55e">🟢</span> 정상</div>${ok.map(cardHTML).join("")}`:""}
+    <div style="height:30px"></div>
+  </div>
+  ${state.modal ? modalHTML() : ""}
+  ${state.toast ? `<div class="toast">${state.toast}</div>` : ""}
+  `;
+  const ki = document.getElementById("km-input");
+  if(ki) ki.addEventListener("keydown", e=>{ if(e.key==="Enter") saveMileage(); });
+}
+
+function cardHTML(item) {
+  const st = getStatus(item);
+  const col = colorOf(st.level);
+  const nextKm = getNextKm(item);
+  const lastRec = item.records[item.records.length-1];
+  const remText = st.remaining!=null ? (st.remaining>0?`+${Math.round(st.remaining)}km`:`${Math.round(st.remaining)}km`) : "";
+  const diHTML = st.dateInfo ? `<div class="card-date">📅 ${st.dateInfo.expireDate.toLocaleDateString("ko-KR")} · ${st.dateInfo.remainDays>0?st.dateInfo.remainDays+"일 남음":Math.abs(st.dateInfo.remainDays)+"일 초과"}</div>` : "";
+  const lastHTML = lastRec ? `<div class="card-date" style="margin-top:2px">마지막: ${lastRec.date} · ${fkm(lastRec.km)}km</div>` : `<span class="no-record">기록 없음</span>`;
+  const progHTML = nextKm ? `<div class="prog-wrap"><div class="prog-track"><div class="prog-bar" style="width:${st.progress}%;background:${col}"></div></div><div class="prog-next">${fkm(nextKm)}km</div></div>` : "";
+  return `<div class="card" style="border-left-color:${col}"><div class="card-inner">
+    <div class="card-icon">${item.icon}</div>
+    <div class="card-body">
+      <div class="card-label">${item.label}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span class="badge badge-${st.level}">${st.text}</span>
+        ${remText?`<span style="font-size:11px;color:${col};font-weight:600">${remText}</span>`:""}
+      </div>
+      ${diHTML}${lastHTML}
+    </div>
+    <div class="card-right">${progHTML}<button class="edit-btn" onclick="openModal('${item.id}')">✏️</button></div>
+  </div></div>`;
+}
+
+function modalHTML() {
+  const item = state.items.find(i=>i.id===state.modal);
+  if(!item) return "";
+  const sorted = [...item.records].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const recHTML = sorted.length ? sorted.slice(0,5).map(r=>`
+    <div class="record-item"><span class="record-date">📅 ${r.date}</span><span class="record-km">${fkm(r.km)} km</span></div>`).join("")
+    : `<div style="color:var(--muted);font-size:12px;text-align:center;padding:10px">기록 없음</div>`;
+  return `<div class="overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title"><span>${item.icon} ${item.label} 기록 추가</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>날짜 *</label><input type="date" id="f-date" value="${state.form.date}" oninput="state.form.date=this.value"/></div>
+    <div class="field"><label>주행거리(km) *</label><input type="number" id="f-km" value="${state.form.km}" placeholder="예: 85000" oninput="state.form.km=this.value"/></div>
+    <div class="modal-btns">
+      <button class="btn-save" onclick="saveRecord()">💾 저장</button>
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+    </div>
+    <div class="record-list">
+      <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px">최근 정비 이력</div>
+      ${recHTML}
+    </div>
+  </div></div>`;
+}
+
+function saveMileage() {
+  state.mileage = Number(document.getElementById("km-input")?.value || state.mileage);
+  save(); showToast("📍 주행거리 저장됨!"); render();
+}
+function openModal(id) {
+  state.modal = id; state.form = { date:today(), km:String(state.mileage) }; render();
+}
+function closeModal() { state.modal = null; render(); }
+function saveRecord() {
+  const d = document.getElementById("f-date")?.value || state.form.date;
+  const k = document.getElementById("f-km")?.value || state.form.km;
+  if(!d||!k) { showToast("⚠️ 날짜·km 필수!"); return; }
+  const item = state.items.find(i=>i.id===state.modal);
+  if(!item) return;
+  item.records = [...item.records, {date:d,km:String(k)}].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  state.modal = null; save(); showToast("✅ 기록 저장됨!"); render();
+}
+function showToast(msg) {
+  if(state.toastTimer) clearTimeout(state.toastTimer);
+  state.toast = msg; render();
+  state.toastTimer = setTimeout(()=>{ state.toast=""; render(); }, 2200);
+}
+async function copySummary() {
+  const urgent = state.items.filter(i=>getStatus(i).level==="red").map(i=>i.label);
+  const warn   = state.items.filter(i=>getStatus(i).level==="orange").map(i=>i.label);
+  const miss   = state.items.filter(i=>!i.records.length).map(i=>i.label);
+  const lines  = [
+    urgent.length?`🚨 즉시교체: ${urgent.join(", ")}`:null,
+    warn.length?`⚠️ 교체임박: ${warn.join(", ")}`:null,
+    miss.length?`📝 기록없음: ${miss.join(", ")}`:null,
+    `📍 현재주행: ${fkm(state.mileage)}km`,
+    `🚗 티볼리에어 정비요청`,
+  ].filter(Boolean).join("\n");
+  try { await navigator.clipboard.writeText(lines); showToast("📋 복사 완료!"); }
+  catch { showToast("⚠️ 복사 실패"); }
+}
+
+load(); render();
+</script>
+</body>
+</html>
